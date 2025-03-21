@@ -1,0 +1,191 @@
+services:
+############################
+# NO_VPN
+############################
+
+  no_vpn:
+    image: alpine:latest
+    container_name: no_vpn
+    command: sh -c "apk update && apk add --no-cache openssh curl && sleep infinity"
+    stdin_open: true
+    tty: true
+    volumes:
+     - ~/.ssh:/root/.ssh 
+
+############################
+# NORDVPN_OPENVPN
+############################
+
+  nordvpn_openvpn:
+    image: alpine:latest
+    network_mode: service:gluetun1
+    container_name: nordvpn_openvpn
+    command: sh -c "sleep 5 && apk update && apk add --no-cache openssh curl && sleep infinity"
+    stdin_open: true
+    depends_on:
+      - gluetun1
+    tty: true
+    volumes:
+     - ~/.ssh:/root/.ssh 
+
+  gluetun1:
+    image: qmcgaw/gluetun
+    container_name: gluetun1
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER=${NORDVPN_OPENVPN_USER}
+      - OPENVPN_PASSWORD=${NORDVPN_OPENVPN_PASSWORD}
+      - SERVER_CITIES=${CITY}
+
+############################
+# NORDVPN_WIREGUARD
+############################
+
+  nordvpn_wireguard:
+    image: alpine:latest
+    network_mode: service:gluetun2
+    container_name: nordvpn_wireguard
+    command: sh -c "sleep 5 && apk update && apk add --no-cache openssh curl && sleep infinity"
+    stdin_open: true
+    depends_on:
+      - gluetun2
+    tty: true
+    volumes:
+     - ~/.ssh:/root/.ssh 
+
+  gluetun2:
+    image: qmcgaw/gluetun
+    container_name: gluetun2
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${NORDVPN_WIREGUARD_KEY}
+      - SERVER_CITIES=${CITY}
+
+############################
+# Surfshark_OpenVPN
+############################
+
+  surfshark_openvpn:
+    image: alpine:latest
+    network_mode: service:gluetun3
+    container_name: surfshark_openvpn
+    command: sh -c "sleep 5 && apk update && apk add --no-cache openssh curl && sleep infinity"
+    stdin_open: true
+    depends_on:
+      - gluetun3
+    tty: true
+    volumes:
+     - ~/.ssh:/root/.ssh 
+
+  gluetun3:
+    image: qmcgaw/gluetun
+    container_name: gluetun3
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=surfshark
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER=${SURFSHARK_OPENVPN_USER}
+      - OPENVPN_PASSWORD=${SURFSHARK_OPENVPN_PASSWORD}
+      - SERVER_CITIES=${CITY}
+
+############################
+# Surfshark_Wireguard
+############################
+
+  surfshark_wireguard:
+    image: alpine:latest
+    network_mode: service:gluetun4
+    container_name: surfshark_wireguard
+    command: sh -c "sleep 5 && apk update && apk add --no-cache openssh curl && sleep infinity"
+    stdin_open: true
+    depends_on:
+      - gluetun4
+    tty: true
+    volumes:
+     - ~/.ssh:/root/.ssh 
+
+  gluetun4:
+    image: qmcgaw/gluetun
+    container_name: gluetun4
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=surfshark
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${SURFSHARK_WIREGUARD_KEY}
+      - WIREGUARD_ADDRESSES=${SURFSHARK_WIREGUARD_ADDRESSES}
+      - SERVER_CITIES=${CITY}
+
+############################
+# ProtonVPN_OpenVPN
+############################
+
+  protonvpn_openvpn:
+    image: alpine:latest
+    network_mode: service:gluetun5
+    container_name: protonvpn_openvpn
+    command: sh -c "sleep 5 && apk update && apk add --no-cache openssh curl && sleep infinity"
+    stdin_open: true
+    depends_on:
+      - gluetun5
+    tty: true
+    volumes:
+     - ~/.ssh:/root/.ssh 
+
+  gluetun5:
+    image: qmcgaw/gluetun
+    container_name: gluetun5
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER=${PROTONVPN_OPENVPN_USER}
+      - OPENVPN_PASSWORD=${PROTONVPN_OPENVPN_PASSWORD}
+      - SERVER_CITIES=${CITY}
+
+############################
+# ProtonVPN_Wireguard
+############################
+
+  protonvpn_wireguard:
+    image: alpine:latest
+    network_mode: service:gluetun6
+    container_name: protonvpn_wireguard
+    command: sh -c "sleep 5 && apk update && apk add --no-cache openssh curl && sleep infinity"
+    stdin_open: true
+    depends_on:
+      - gluetun6
+    tty: true
+    volumes:
+     - ~/.ssh:/root/.ssh 
+
+  gluetun6:
+    image: qmcgaw/gluetun
+    container_name: gluetun6
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${PROTONVPN_WIREGUARD_KEY}
+      - SERVER_CITIES=${CITY}
